@@ -5,12 +5,10 @@
   "main": "index.js",
   "private": true,
   "dependencies": {
-
+    "fastify": "2.6.0"
   },
   "devDependencies": {
-  },
-  "ava": {
-    "failWithoutAssertions": false
+    "autocannon": "4.0.0"
   },
   "scripts": {
     "start": "node index.js",
