@@ -1,8 +1,10 @@
 const fastify = require('fastify')({ logger: false });
 
+const basicReply = { r: 'ok ' };
+
 fastify.get('/', async (request, reply) => {
   reply.type('application/json').code(200);
-  return { hello: 'world' };
+  return basicReply;
 });
 
 fastify.listen(4444, (err, address) => {
