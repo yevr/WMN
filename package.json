@@ -1,0 +1,22 @@
+{
+  "name": "wm-notes",
+  "version": "0.0.1",
+  "description": "Notes Web Service",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+
+  },
+  "devDependencies": {
+  },
+  "ava": {
+    "failWithoutAssertions": false
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "NODE_ENV=test TEST=1 nyc --all ava test/main.test.js --serial --verbose",
+    "test:dev": "NODE_ENV=test TEST=1 ava test/main.test.js --verbose",
+    "lint": "eslint .",
+    "debug": "node --inspect-brk=3021 ."
+  }
+}
