@@ -14,7 +14,7 @@
     "start": "node index.js",
     "test:perf": "NODE_ENV=test TEST=1 nyc --all ava test/main.test.js --serial --verbose",
     "test:dev": "NODE_ENV=test TEST=1 ava test/main.test.js --verbose",
-    "test": "autocannon http://localhost:4444",
+    "test": "autocannon -c 100 -p 15 -d 10 localhost:4444",
     "lint": "eslint .",
     "debug": "node --inspect-brk=3021 ."
   }
