@@ -34,17 +34,16 @@ class NoteModel {
     return noteStorage;
   }
 
-  // Normally we'd have findOne, findMany or findByTitle, findByText, etc - assume it's all just 'find' for brevity.
   static async findById(id) {
     return noteStorage.find(note => note.id === id) || null;
   }
 
   static async findByTitle(title) {
-    return noteStorage.filter(note => note.title.includes(title));
+    return noteStorage.filter(note => note.title.includes(title)) || null;
   }
 
   static async findByText(text) {
-    return noteStorage.filter(note => note.title.includes(title));
+    return noteStorage.filter(note => note.text.includes(text)) || null;
   }
 
   static async update(note) {

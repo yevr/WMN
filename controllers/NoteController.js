@@ -28,10 +28,12 @@ const getOrFindNotes = async (request, reply) => {
   if (request.params.id) {
     const result = await NoteModel.findById(request.params.id);
     result ? reply.code(200).send(NoteModel.getAsJson(result)) : reply.code(404).send();
-  } else if (request.params.title) {
-    // find by title
-  } else if (request.params.text) {
-    // find by text
+  } else if (request.query.title) {
+    const result = await NoteModel.findByTitle(request.query.title);
+    result ? reply.code(200).send(result.map(item => NoteModel.getAsJson(item))) : reply.code(404).send();
+  } else if (request.query.text) {
+    const result = await NoteModel.findByText(request.query.text);
+    result ? reply.code(200).send(result.map(item => NoteModel.getAsJson(item))) : reply.code(404).send();
   }
   reply.code(200).send(await NoteModel.getAllNotes());
 };
