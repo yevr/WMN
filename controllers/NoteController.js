@@ -8,7 +8,7 @@ const addNote = async (request, reply) => {
   const { body } = request;
   let createdNote;
 
-  if (!body.id && body.text && body.title) {
+  if (body && !body.id && body.text && body.title) {
     try {
       createdNote = await NoteModel.create(new NoteModel({
         text: body.text,
@@ -37,19 +37,31 @@ const getOrFindNotes = async (request, reply) => { // This should be broken down
   }
   reply.code(200).send(await NoteModel.getAllNotes());
 };
-const overwriteNotes = async (request, reply) => {
+const overwriteNote = async (request, reply) => {
+  // Overall, this is likely what I'm least happy with in this sample project. Great conversation topic :)
+  // For starters: update ID is taken from the URL, replaced with the one in body. Line breaks are also an issue.
   console.log('overwriteNotes');
   console.log(`body ${JSON.stringify(request.body)}`);
   console.log(`query ${JSON.stringify(request.query)}`);
   console.log(`params ${JSON.stringify(request.params)}`);
+  if (!request.params.id || !request.body || !request.body.text || !request.body.title) {
+    // This validation is inadequate, but still better than nothing.
+    reply.code(400).send();
+  }
+  let result;
   try {
-    await NoteModel.update(new NoteModel({ id: request.params.id })); // TODO - add note object data.
+    result = await NoteModel.update(new NoteModel({
+      id: request.params.id,
+      text: request.body.text,
+      title: request.body.title,
+    }));
   } catch (err) {
     reply.code(500).send(JSON.stringify(err));
   }
-  reply.code(200).send();
+  // This is an interesting one... let's assume failure means 422 here (See rushed NoteModel implementation)
+  result ? reply.code(200).send() : reply.code(422).send({ message: 'Unprocessable entity.' });
 };
-const deleteNotes = async (request, reply) => {
+const deleteNote = async (request, reply) => {
   let result;
   try {
     result = await NoteModel.deleteById(request.params.id);
@@ -82,7 +94,7 @@ const routeMappings = [
   {
     method: 'PUT', // Overwrite a note.
     url: addPrefixToRoute('/:id'),
-    handler: overwriteNotes,
+    handler: overwriteNote,
   },
   {
     method: 'DELETE', // To inform API consumer.
@@ -92,7 +104,7 @@ const routeMappings = [
   {
     method: 'DELETE', // Delete a note.
     url: addPrefixToRoute('/:id'),
-    handler: deleteNotes,
+    handler: deleteNote,
   },
 ];
 

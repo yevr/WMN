@@ -46,8 +46,13 @@ class NoteModel {
     return noteStorage.filter(note => note.text.includes(text)) || null;
   }
 
-  static async update(note) {
-    console.log('updateTODO!');
+  static async update(note) { // Array manipulation perf wizardry aside, let's delete/re-add for brevity.
+    // Because of the questionable implementation, let's ensure our delete doesn't fail & we only create.
+    if (await NoteModel.deleteById(note.id)) {
+      await NoteModel.create(new NoteModel(note));
+      return true;
+    }
+    return false;
   }
 
   static async deleteById(id) { // Avoid filters or fanciness here. Splice is extremely performant in V8.
