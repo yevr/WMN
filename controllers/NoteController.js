@@ -1,25 +1,27 @@
-let fastifyInstance;
-let controllerPrefix = '/notes'; // TODO move to config.
-const addPrefixToRoute = url => controllerPrefix + url;
-const noteModel = require('./../models/NoteModel');
+const NoteModel = require('./../models/NoteModel');
+const { routePrefix } = require('./../config/server');
 
-const getNote = (request, reply) => {
-  reply.code(200).send({ invoked: 'getNote' });
-};
+const addPrefixToRoute = url => routePrefix + url;
+let fastifyInstance = null;
+
 const getNotes = (request, reply) => {
-  reply.code(200).send({ invoked: 'getNotes' });
+  reply.code(200).send({ invoked: 'getNotes', note: new NoteModel({}).id, params: request });
 };
 const addNote = (request, reply) => {
-  reply.code(200).send({ invoked: 'addNote' });
+  reply.code(200).send({ invoked: 'addNotes' });
 };
-const overwriteNote = (request, reply) => {
-  reply.code(200).send({ invoked: 'overwriteNote' });
+const overwriteNotes = (request, reply) => {
+  reply.code(200).send({ invoked: 'overwriteNotes' });
 };
-const updateNote = (request, reply) => {
-  reply.code(200).send({ invoked: 'updateNote' });
+const updateNotes = (request, reply) => {
+  reply.code(200).send({ invoked: 'updateNotes' });
 };
-const deleteNote = (request, reply) => {
-  reply.code(200).send({ invoked: 'deleteNote' });
+const deleteNotes = (request, reply) => {
+  reply.code(200).send({ invoked: 'deleteNotes' });
+};
+
+const notAllowed = (request, reply) => {
+  reply.code(405).send({ message: 'This call is not allowed without specifying resource IDs' });
 };
 
 const routeMappings = [
@@ -34,54 +36,47 @@ const routeMappings = [
     handler: getNotes,
   },
   {
-    method: 'GET', // Gets a note
-    url: addPrefixToRoute('/:id'),
-    handler: getNote,
+    method: 'GET', // Search for notes - by ID, title or text.
+    url: addPrefixToRoute('/:params'),
+    handler: getNotes,
+  },
+  {
+    method: 'PUT', // To inform API consumer.
+    url: addPrefixToRoute('/'),
+    handler: notAllowed,
   },
   {
     method: 'PUT', // Overwrite a note.
     url: addPrefixToRoute('/:id'),
-    handler: overwriteNote,
+    handler: overwriteNotes,
+  },
+  {
+    method: 'PATCH', // To inform API consumer.
+    url: addPrefixToRoute('/'),
+    handler: notAllowed,
   },
   {
     method: 'PATCH', // Partially update a note.
     url: addPrefixToRoute('/:id'),
-    handler: updateNote,
+    handler: updateNotes,
+  },
+  {
+    method: 'DELETE', // To inform API consumer.
+    url: addPrefixToRoute('/'),
+    handler: notAllowed,
   },
   {
     method: 'DELETE', // No wildcard deletes. No multiple deletes since it'd require transactional support.
     url: addPrefixToRoute('/:id'),
-    handler: deleteNote,
+    handler: deleteNotes,
   },
 ];
 
-// fastifyInstance.route({
-//   method: 'GET',
-//   url: '/',
-//   schema: {
-//     querystring: {
-//       name: { type: 'string' },
-//       excitement: { type: 'integer' },
-//     },
-//     response: {
-//       200: {
-//         type: 'object',
-//         properties: {
-//           hello: { type: 'string' },
-//         },
-//       },
-//     },
-//   },
-//   handler(request, reply) {
-//     reply.send({ hello: 'world' });
-//   },
-// });
-
-const setFastifyInstance = (framework) => {
+const setFastifyInstance = (fastify) => {
   if (fastifyInstance) {
     throw new Error('Framework already set!');
   } else {
-    fastifyInstance = framework;
+    fastifyInstance = fastify;
   }
 };
 

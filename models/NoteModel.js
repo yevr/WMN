@@ -1,22 +1,36 @@
 const uuid_v4 = require('uuid/v4');
+const noteStorage = {}; // TODO use StorageFlatFile.
 
 class NoteModel {
-  #id = uuid_v4();
-  #title = '';
-  #text = '';
+  #id;
+  #title;
+  #text;
 
   constructor(note) {
-    if (!NoteModel.verifyNote(note)) {
-      throw new Error('Invalid schema!');
-    }
-    this.id = note.id;
-    this.title = note.title;
-    this.text = note.text;
+    this.id = note.id || uuid_v4();
+    this.title = note.title || '';
+    this.text = note.text || '';
   }
 
-  static verifyNote = (note) => {
-    return note.title && note.text;
-  };
+  static create(note) {
+    console.log('createTODO!');
+  }
+
+  static get(note) {
+    console.log('getTODO!');
+  }
+
+  static find(note) {
+    console.log('findTODO!');
+  }
+
+  static update(note) {
+    console.log('updateTODO!');
+  }
+
+  static delete(note) {
+    console.log('deleteTODO!');
+  }
 
   set id(id) {
     this.#id = id;
