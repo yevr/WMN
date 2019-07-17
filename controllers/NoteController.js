@@ -4,17 +4,57 @@ const { routePrefix } = require('./../config/server');
 const addPrefixToRoute = url => routePrefix + url;
 let fastifyInstance = null;
 
-const addNote = (request, reply) => {
-  reply.code(200).send({ invoked: 'addNotes' });
+const addNote = async (request, reply) => {
+  const { body } = request;
+  let createdNote;
+
+  if (!body.id && body.text && body.title) {
+    try {
+      createdNote = await NoteModel.create(new NoteModel({
+        text: body.text,
+        title: body.title,
+      }));
+    } catch (err) {
+      reply.code(500).send(JSON.stringify(err));
+    }
+  }
+  createdNote ? reply.code(200).send(NoteModel.getAsJson(createdNote)) : reply.code(400).send();
 };
 const getOrFindNotes = async (request, reply) => {
+  // Extremely hacky for brevity. Our magic functionality here is:
+  // First, if request.params.id is not empty, getOne - return the item.
+  // Then, if title is supplied, search for many by title (and then by text)
+  // Else, it's a clear request so we return all items.
+  if (request.params.id) {
+    const result = await NoteModel.findById(request.params.id);
+    result ? reply.code(200).send(NoteModel.getAsJson(result)) : reply.code(404).send();
+  } else if (request.params.title) {
+    // find by title
+  } else if (request.params.text) {
+    // find by text
+  }
   reply.code(200).send(await NoteModel.getAllNotes());
 };
-const overwriteNotes = (request, reply) => {
-  reply.code(200).send({ invoked: 'overwriteNotes' });
+const overwriteNotes = async (request, reply) => {
+  console.log('overwriteNotes');
+  console.log(`body ${JSON.stringify(request.body)}`);
+  console.log(`query ${JSON.stringify(request.query)}`);
+  console.log(`params ${JSON.stringify(request.params)}`);
+  try {
+    await NoteModel.update(new NoteModel({ id: request.params.id })); // TODO - add note object data.
+  } catch (err) {
+    reply.code(500).send(JSON.stringify(err));
+  }
+  reply.code(200).send();
 };
-const deleteNotes = (request, reply) => {
-  reply.code(200).send({ invoked: 'deleteNotes' });
+const deleteNotes = async (request, reply) => {
+  // try to delete if we find a matching ID. if we don't, do nothing.
+  try {
+    await NoteModel.delete(new NoteModel({ id: request.params.id }));
+  } catch (err) {
+    reply.code(500).send(JSON.stringify(err));
+  }
+  reply.code(200).send();
 };
 
 const notAllowed = (request, reply) => {
@@ -29,7 +69,7 @@ const routeMappings = [
   },
   {
     method: 'GET', // Get by id, search, or return all (together for brevity).
-    url: addPrefixToRoute('/:params'),
+    url: addPrefixToRoute('/:id'),
     handler: getOrFindNotes,
   },
   {
