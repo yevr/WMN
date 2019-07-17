@@ -4,17 +4,14 @@ const { routePrefix } = require('./../config/server');
 const addPrefixToRoute = url => routePrefix + url;
 let fastifyInstance = null;
 
-const getNotes = (request, reply) => {
-  reply.code(200).send({ invoked: 'getNotes', note: new NoteModel({}).id, params: request });
-};
 const addNote = (request, reply) => {
   reply.code(200).send({ invoked: 'addNotes' });
 };
+const getOrFindNotes = async (request, reply) => {
+  reply.code(200).send(await NoteModel.getAllNotes());
+};
 const overwriteNotes = (request, reply) => {
   reply.code(200).send({ invoked: 'overwriteNotes' });
-};
-const updateNotes = (request, reply) => {
-  reply.code(200).send({ invoked: 'updateNotes' });
 };
 const deleteNotes = (request, reply) => {
   reply.code(200).send({ invoked: 'deleteNotes' });
@@ -26,19 +23,14 @@ const notAllowed = (request, reply) => {
 
 const routeMappings = [
   {
-    method: 'POST', // Return state of created object, with the generated ID.
+    method: 'POST', // Return state of created note, with the generated ID.
     url: addPrefixToRoute('/'),
     handler: addNote,
   },
   {
-    method: 'GET', // Gets all notes
-    url: addPrefixToRoute('/'),
-    handler: getNotes,
-  },
-  {
-    method: 'GET', // Search for notes - by ID, title or text.
+    method: 'GET', // Get by id, search, or return all (together for brevity).
     url: addPrefixToRoute('/:params'),
-    handler: getNotes,
+    handler: getOrFindNotes,
   },
   {
     method: 'PUT', // To inform API consumer.
@@ -51,22 +43,12 @@ const routeMappings = [
     handler: overwriteNotes,
   },
   {
-    method: 'PATCH', // To inform API consumer.
-    url: addPrefixToRoute('/'),
-    handler: notAllowed,
-  },
-  {
-    method: 'PATCH', // Partially update a note.
-    url: addPrefixToRoute('/:id'),
-    handler: updateNotes,
-  },
-  {
     method: 'DELETE', // To inform API consumer.
     url: addPrefixToRoute('/'),
     handler: notAllowed,
   },
   {
-    method: 'DELETE', // No wildcard deletes. No multiple deletes since it'd require transactional support.
+    method: 'DELETE', // Delete a note.
     url: addPrefixToRoute('/:id'),
     handler: deleteNotes,
   },

@@ -16,14 +16,14 @@ const setDefaultProvider = (storageName) => {
   throw new Error(`Storage '${storageName}' is not supported.`);
 };
 
-const getInstanceByProvider = (args, storageName) => {
-  if (Object.prototype.hasOwnProperty.call(classMappings, storageName)) {
-    if (!classInstances[storageName]) {
-      classInstances[storageName] = new classMappings[storageName](args);
+const getInstanceByProvider = (config, provider) => {
+  if (Object.prototype.hasOwnProperty.call(classMappings, provider)) {
+    if (!classInstances[provider]) {
+      classInstances[provider] = new classMappings[provider](config);
     }
-    return classInstances[storageName];
+    return classInstances[provider];
   }
-  throw new Error(`Storage '${storageName}' is not supported.`);
+  throw new Error(`Storage '${provider}' is not supported.`);
 };
 
 const getInstance = () => getInstanceByProvider(storageConfiguration, getDefaultProvider());

@@ -1,5 +1,9 @@
 const uuid_v4 = require('uuid/v4');
-const noteStorage = {}; // TODO use StorageFlatFile.
+const noteStorage = [
+  {id: '530b37e8-5915-4753-9097-6040e179e45d', title: 'testNote1', text: 'Test Contents For Search'},
+  {id: '530b37e8-5915-4753-9097-6040e179e46d', title: 'testNote2', text: 'Partial Or FullText'},
+  {id: '530b37e8-5915-4753-9097-6040e179e47d', title: 'testNote3', text: 'Foo Bar'},
+]; // TODO use StorageFlatFile.
 
 class NoteModel {
   #id;
@@ -12,23 +16,24 @@ class NoteModel {
     this.text = note.text || '';
   }
 
-  static create(note) {
+  static async create(note) {
     console.log('createTODO!');
   }
 
-  static get(note) {
-    console.log('getTODO!');
+  static async getAllNotes() {
+    return noteStorage;
   }
 
-  static find(note) {
+  // Normally we'd have findOne, findMany or findByTitle, findByText, etc - assume it's all just 'find' for brevity.
+  static async find(note) {
     console.log('findTODO!');
   }
 
-  static update(note) {
+  static async update(note) {
     console.log('updateTODO!');
   }
 
-  static delete(note) {
+  static async delete(note) {
     console.log('deleteTODO!');
   }
 
