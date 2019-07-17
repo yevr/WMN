@@ -1,5 +1,5 @@
 const uuid_v4 = require('uuid/v4');
-const noteStorage = [
+const noteStorage = [ // Default data to enable easier testing since there's no persistent storage.
   {id: '530b37e8-5915-4753-9097-6040e179e45d', title: 'testNote1', text: 'Test Contents For Search'},
   {id: '530b37e8-5915-4753-9097-6040e179e46d', title: 'testNote2', text: 'Partial Foo Or FullText'},
   {id: '530b37e8-5915-4753-9097-6040e179e47d', title: 'testNote3', text: 'Foo Bar'},
@@ -50,8 +50,14 @@ class NoteModel {
     console.log('updateTODO!');
   }
 
-  static async delete(note) {
-    console.log('deleteTODO!');
+  static async deleteById(id) { // Avoid filters or fanciness here. Splice is extremely performant in V8.
+    for(let i = 0; i < noteStorage.length; i++){
+      if (noteStorage[i].id === id) {
+        noteStorage.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
   }
 
   set id(id) {

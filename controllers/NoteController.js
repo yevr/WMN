@@ -20,7 +20,7 @@ const addNote = async (request, reply) => {
   }
   createdNote ? reply.code(200).send(NoteModel.getAsJson(createdNote)) : reply.code(400).send();
 };
-const getOrFindNotes = async (request, reply) => {
+const getOrFindNotes = async (request, reply) => { // This should be broken down.
   // Extremely hacky for brevity. Our magic functionality here is:
   // First, if request.params.id is not empty, getOne - return the item.
   // Then, if title is supplied, search for many by title (and then by text)
@@ -50,13 +50,13 @@ const overwriteNotes = async (request, reply) => {
   reply.code(200).send();
 };
 const deleteNotes = async (request, reply) => {
-  // try to delete if we find a matching ID. if we don't, do nothing.
+  let result;
   try {
-    await NoteModel.delete(new NoteModel({ id: request.params.id }));
+    result = await NoteModel.deleteById(request.params.id);
   } catch (err) {
     reply.code(500).send(JSON.stringify(err));
   }
-  reply.code(200).send();
+  reply.code(result ? 200 : 404).send();
 };
 
 const notAllowed = (request, reply) => {
