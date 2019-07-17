@@ -1,0 +1,6 @@
+{
+  "storageProvider": "flatFile",
+  "storageConfiguration": {
+    "fileName": "defaultStorage.txt"
+  }
+}

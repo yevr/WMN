@@ -2,20 +2,20 @@
   "name": "wm-notes",
   "version": "0.0.1",
   "description": "Notes Web Service",
-  "main": "index.js",
+  "main": "server.js",
   "private": true,
   "dependencies": {
     "fastify": "2.6.0"
   },
   "devDependencies": {
+    "eslint": "5.15.3",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "2.16.0",
     "autocannon": "4.0.0"
   },
   "scripts": {
-    "start": "node index.js",
-    "test:perf": "NODE_ENV=test TEST=1 nyc --all ava test/main.test.js --serial --verbose",
-    "test:dev": "NODE_ENV=test TEST=1 ava test/main.test.js --verbose",
+    "start": "node server.js",
     "test": "autocannon -c 100 -p 15 -d 10 localhost:4444",
-    "lint": "eslint .",
-    "debug": "node --inspect-brk=3021 ."
+    "lint": "eslint ."
   }
 }

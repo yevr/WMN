@@ -1,0 +1,7 @@
+{
+  "port": 4444,
+  "routePrefix": "notes",
+  "logger": false,
+  "rateLimit": false,
+  "showDetailedErrors": false
+}
